@@ -1,0 +1,43 @@
+To launch the program input as arguments the name of the fvg file
+to open (it it doesn't exist it will be created when saving)
+a valid JPG file and (as optional argument) the SVG export mode:
+-P (distinct paths), -C (compound path), -L (masked image linked)
+-E (masked image embedded)
+
+example (windows): fbvg filename.fvg filename.jpg -P
+
+*** keyboard shortcuts ***
+
+Tools:
+
+P - Pen tool
+    Click and drag the mouse to create a node.
+    Press alt while dragging to create a not sloped node.
+    Click on the beginning of the path to close the path itself.
+    
+H - Hand tool
+    Click and drag the mouse to pan the workarea
+	
+Mouse wheel
+    will affect the zoom ratio
+    
+CANC (DELETE)
+	delete the last node created
+	
+CTRL + CANC (DELETE)
+	delete the whole working path
+
+CTRL + S
+    Save the .fvg file
+    
+CTRL + E
+    Export the SVG file in the mode specified via the command-line
+    
+CTRL + Q
+    Quit the program
+    
+    
+
+---
+
+please see also aknowledgements.txt
