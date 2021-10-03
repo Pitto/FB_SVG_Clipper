@@ -6,7 +6,7 @@
 #define	SCR_W		1024
 #define	SCR_H		768
 #define APP_NAME	"FBVG"
-#define APP_VERSION	"0.0.8"
+#define APP_VERSION	"0.0.9"
 #define APP_AUTHOR	"Pitto"
 
 'colors

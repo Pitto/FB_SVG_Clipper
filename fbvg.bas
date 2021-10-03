@@ -108,28 +108,58 @@ do
 	
 	if keyboard.pressed (Fb.SC_DELETE) then
 		
-		if keyboard.held (Fb.SC_CONTROL) then
-			'delete the whole path
-			layer.delete_working_path()
-		else
-			'delete last node of the path
-			layer.path->delete_first_point ()
-		end if
-	
+		select case tool.selected
+		
+			case TOOL_PEN
+		
+				if keyboard.held (Fb.SC_CONTROL) then
+					'delete the whole path
+					layer.delete_working_path()
+				else
+					'delete last node of the path
+					if layer.path -> is_closed = false then 
+						layer.path->delete_first_point ()
+					end if
+				end if
+				
+			case TOOL_SELECTION
+				
+				layer.delete_selected_paths()
+
+		end select
+		
 	end if
-
-
-	
 	
 	
 	tool.update (@keyboard)
 	
-	static as vec_2d position, control_next, control_next_old, control_prev
+	static as vec_2d 	position, control_next, control_next_old, _
+						control_prev, start_drag_position, end_drag_position
+					
 		
 	select case tool.selected
 	
 		case TOOL_SELECTION
 			if mouse.released(Fb.BUTTON_LEFT) then
+			
+				layer.select_paths  (	start_drag_position, _
+										end_drag_position)				
+			
+			end if
+			
+			if mouse.pressed(Fb.BUTTON_LEFT) then
+			
+				layer.deselect_all_paths () 		
+			
+			end if
+			
+			if mouse.held(Fb.BUTTON_LEFT) then
+			
+				start_drag_position = absolute ( type <vec_2d> (mouse.startX, mouse.startY),_
+												pan_and_zoom._zoom, pan_and_zoom._pan)
+				end_drag_position	= absolute ( type <vec_2d> (mouse.X, mouse.Y), _
+												pan_and_zoom._zoom, pan_and_zoom._pan)
+			
 			end if
 			
 		case TOOL_DIRECT_SELECTION
@@ -201,6 +231,14 @@ do
 	screen_output.draw_paths (layer.get_path, position, control_next, control_prev)
 	
 	screen_output.draw_control_points (position, control_next, control_prev)
+	
+	if tool.selected = TOOL_SELECTION andalso mouse.held(Fb.BUTTON_LEFT) then
+	
+			screen_output.draw_selection_area (start_drag_position, end_drag_position)
+	
+	end if
+	
+	
 	screen_output.draw_pointer (mouse.X, mouse.Y, tool.selected)
 	
 	screen_output.display_all

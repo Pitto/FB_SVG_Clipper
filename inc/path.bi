@@ -160,11 +160,7 @@ sub path_proto.add_point(v1 as vec_2d, v2 as vec_2d, v3 as vec_2d, zoom as singl
 		
 		_point->is_slope_constant  = iif (v2.x = -v3.x andalso v2.y = -v3.y, true, false)
 		
-		
-		
-		
 
-			
 		#IFDEF DEBUG
 			utility_consmessage    ("added a point @ " + hex(p) + ": " _
 									+ str(v1.x) + ", "+ str(v1.y) + " | " _

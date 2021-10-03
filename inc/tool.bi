@@ -66,12 +66,12 @@ end constructor
 
 sub tool_proto.update (keyb as KeyboardInput ptr)
 
-	'if (keyb->pressed (Fb.SC_V)) then
-		'this.tool = TOOL_SELECTION
-		'#IFDEF DEBUG
-			'utility_consmessage    ("TOOL: TOOL_SELECTION")
-		'#ENDIF
-	'end if
+	if (keyb->pressed (Fb.SC_V)) then
+		this.tool = TOOL_SELECTION
+		#IFDEF DEBUG
+			utility_consmessage    ("TOOL: TOOL_SELECTION")
+		#ENDIF
+	end if
 	
 	'if (keyb->pressed (Fb.SC_A)) then
 		'this.tool = TOOL_DIRECT_SELECTION

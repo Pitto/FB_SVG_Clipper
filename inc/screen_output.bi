@@ -18,6 +18,9 @@ type screen_output_proto
 	declare sub draw_control_points (	position as vec_2d, _
 										control_next as vec_2d, _
 										control_prev as vec_2d)
+										
+	declare sub draw_selection_area (	start_pos as vec_2d, _
+										end_pos as vec_2d)
 	
 	declare property is_mouse_held () as boolean
 	declare property is_mouse_held (value as boolean) 
@@ -47,7 +50,7 @@ type screen_output_proto
 								
 	declare sub draw_thick_line(x0 As Long, y0 As Long, x1 As Long, y1 As Long, th As Single, _color As Ulong)	
 	
-	declare function rgb_best_contrast (c as Ulong) as Ulong 					
+	declare function rgb_best_contrast (c as Ulong, value as byte) as Ulong 					
 	
 	declare function imagescale(byval s as fb.Image ptr, _
                     byval w as integer, _
@@ -69,13 +72,13 @@ type screen_output_proto
 end type
 
 'https://stackoverflow.com/questions/38063499/how-to-invert-rgb-hex-values-by-contrast-in-php
-function screen_output_proto.rgb_best_contrast(c as Ulong) as Ulong
+function screen_output_proto.rgb_best_contrast(c as Ulong, value as byte) as Ulong
 
     dim as ulong r, g, b
     
-    r = iif (RGBA_R (c) < 128, 255, 0)
-    g = iif (RGBA_R (c) < 128, 255, 0)
-    b = iif (RGBA_R (c) < 128, 255, 0)
+    r = iif (RGBA_R (c) < 128, RGBA_R (c) + value, 0)
+    g = iif (RGBA_R (c) < 128, RGBA_R (c) + value, 0)
+    b = iif (RGBA_R (c) < 128, RGBA_R (c) + value, 0)
     
     return rgb(r,g,b)
     
@@ -98,11 +101,11 @@ Sub screen_output_proto.bresenham_line(x0 As Integer, y0 As Integer, x1 As Integ
     Dim As Integer er = IIf(dx > dy, dx, -dy) \ 2, e2
  
     Do
-        PSet this.canvas, (x0+1, y0), this.rgb_best_contrast(point (x0+1, y0, this.canvas))
-        PSet this.canvas, (x0-1, y0), this.rgb_best_contrast(point (x0-1, y0, this.canvas))
-        PSet this.canvas, (x0, y0+1), this.rgb_best_contrast(point (x0, y0+1, this.canvas))
-        PSet this.canvas, (x0, y0-1), this.rgb_best_contrast(point (x0, y0-1, this.canvas))
-        'PSet this.canvas, (x0, y0), this.rgb_best_contrast(point (x0, y0, this.canvas))
+        'PSet this.canvas, (x0+1, y0), this.rgb_best_contrast(point (x0+1, y0, this.canvas))
+        'PSet this.canvas, (x0-1, y0), this.rgb_best_contrast(point (x0-1, y0, this.canvas))
+        'PSet this.canvas, (x0, y0+1), this.rgb_best_contrast(point (x0, y0+1, this.canvas))
+        'PSet this.canvas, (x0, y0-1), this.rgb_best_contrast(point (x0, y0-1, this.canvas))
+        PSet this.canvas, (x0, y0) ', this.rgb_best_contrast(point (x0, y0, this.canvas))
         If (x0 = x1) And (y0 = y1) Then Exit Do
         e2 = er
         If e2 > -dx Then Er -= dy : x0 += sx
@@ -514,7 +517,15 @@ sub screen_output_proto.draw_paths (	path as path_proto ptr, _
 				segment.h1 = projected (_point->position + _point->control_next) 				
 				segment.h2 = projected (_point->next_p->position + _point->next_p->control_prev) 
 				
-				_color = iif (path->is_working_path, C_BLUE, C_DARK_GRAY)
+				if path->is_working_path then
+					_color = C_BLUE 'this.rgb_best_contrast(point (segment.p1.x, segment.p1.y, this.canvas), 100)
+				elseif path->is_selected then
+					_color = C_RED
+				else
+					_color = C_GRAY
+				end if
+				
+				'_color = iif (path->is_working_path, C_BLUE, C_DARK_GRAY)
 				
 				draw_segment ( segment.p1.x, segment.p1.y, _
 							   segment.h1.x, segment.h1.y, _
@@ -522,9 +533,17 @@ sub screen_output_proto.draw_paths (	path as path_proto ptr, _
 							   segment.h2.x, segment.h2.y, _
 							   _color, path->is_working_path)
 				
+				if 	path->is_selected then			   
+					line this.canvas, (segment.p1.x-2, segment.p1.y-2)- step(4,4), C_WHITE, BF
+					line this.canvas, (segment.p1.x-2, segment.p1.y-2)- step(4,4), C_GRAY, B
+				end if
+				
+				
 				if 	path->is_working_path then			   
 					circle this.canvas, (segment.p1.x, segment.p1.y), 2, C_RED,,,, F
 				end if
+				
+				
 				
 			else
 				'highlight the last point of the working path if the user's pointer is near
@@ -596,7 +615,7 @@ sub screen_output_proto.draw_segment (	x1 as single, 	y1 as single,  _
 		if (t) then
 		
 			if is_working_path then
-				this.bresenham_line(old_tx, old_ty, tx, ty, _color)	
+				line this.canvas, (old_tx, old_ty)-(tx,ty), _color
 				'draw_thick_line(old_tx, old_ty, tx, ty, 2, _color)	
 			else
 				line this.canvas, (old_tx, old_ty)-(tx,ty), _color
@@ -610,6 +629,20 @@ sub screen_output_proto.draw_segment (	x1 as single, 	y1 as single,  _
 	next t
 
 end sub
+
+sub screen_output_proto.draw_selection_area (	start_pos as vec_2d, _
+												end_pos as vec_2d)
+							
+	dim as vec_2d p1 , p2
+	
+	p1 =  projected (start_pos)
+	p2 =  projected (end_pos)
+	
+	line this.canvas, 	( p1.x, p1.y ) - ( p2.x, p2.y ) , C_WHITE, B
+	line this.canvas, 	( p1.x+1, p1.y+1 ) - ( p2.x+1, p2.y+1 ) , C_DARK_GRAY, B
+										
+end sub
+
 
 function screen_output_proto.projected (v as vec_2d) as vec_2d
 

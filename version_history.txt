@@ -1,25 +1,30 @@
-TODO List
+TODO List in order of importance
 
-- select nodes
 - select paths
+- select nodes
 
-- Export SVG with bitmap clipped
-- Export SVG with bitmap clipped embedded
 - Export SVG compound path
+- Export SVG with bitmap clipped
+- Export SVG with embedded clipped bitmap
 - Export as transparent PNG
 
 - better image handling
 
-- SPACEBAR -> Hand Tool
-- Join paths
-- Cut paths
-- Undo Levels
-
 - Move points
 - Move paths
+
+- SPACEBAR -> Hand Tool
+- Undo Levels
+- Join paths
+- Cut paths
+
 - Scale paths
 - Rotate paths
 - Copy paths
+
+2021.10.03 - 0.0.9
+
+- delete selected paths
 
 2021.09.26 - 0.0.8
 

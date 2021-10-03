@@ -15,17 +15,31 @@ P - Pen tool
     Press alt while dragging to create a not sloped node.
     Click on the beginning of the path to close the path itself.
     
-H - Hand tool
-    Click and drag the mouse to pan the workarea
-	
-Mouse wheel
-    will affect the zoom ratio
-    
 CANC (DELETE)
 	delete the last node created
 	
 CTRL + CANC (DELETE)
 	delete the whole working path
+	
+----
+    
+H - Hand tool
+    Click and drag the mouse to pan the workarea
+	
+----
+
+Mouse wheel
+    will affect the zoom ratio
+
+----
+    
+v - Select tool
+	Click and drag to select path / paths
+
+CANC (DELETE)
+	delete selected paths
+
+----
 
 CTRL + S
     Save the .fvg file
@@ -35,8 +49,7 @@ CTRL + E
     
 CTRL + Q
     Quit the program
-    
-    
+   
 
 ---
 
