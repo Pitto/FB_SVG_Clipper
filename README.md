@@ -4,7 +4,7 @@
 
 It's written in **FreeBasic language**, it's released under the terms of the *GNU LESSER GENERAL PUBLIC LICENSE Version 3*. It works on Windows an Linux environnements.
 
-![Image of the Laoconte clipped](https://github.com/Pitto/FB_SVG_Clipper/tree/main/_examples/example_laoconte.png)
+![Image of the Laoconte clipped](_examples/example_laoconte.png)
 
 ## User guide
 
