@@ -8,13 +8,20 @@ It's written in **FreeBasic language**, it's released under the terms of the *GN
 
 ## User guide
 
-To launch the program input as arguments the name of the fvg file to open (_if it doesn't exist it will be created when saving_) and a valid JPG file
+To launch the program input as arguments the name of the fvg file to open (_if it doesn't exist it will be created when saving_) and a valid JPG file. The program should be launched by the command-line.
 
 Example (_windows_):
 
 `fbvg filename.fvg filename.jpg`
 
-At the moment it's important that both fvg file and image file are in the same folder.
+At the moment it's important that both `fvg file` and `image file` are in the same folder of the program.
+
+### Compiling instructions
+
+`fbc -exx -g -w all "%f"`
+
+In the console the list of the working commands will appear during the running of the program.
+
 
 ### Keyboard shortcuts
 
@@ -107,43 +114,43 @@ _I wish also thank_
 
 ### Version history
 
-2021.10.03 - 0.0.9
+**0.0.9**
 
 - delete selected paths
 
-2021.09.26 - 0.0.8
+**0.0.8**
 
 - delete last node
 - delete working path
 
-2021.09.23 - 0.0.7
+**0.0.7**
 
 - more options from the command-line
 
-2021.09.11 - 0.0.6
+**0.0.6**
 
 - thick line
 - improved panning 
 
-2021.09.08 - 0.0.5
+**0.0.5**
 
 - save and load file
 - export svg
 - better pen tool pointer icon
 
-2021.09.11 - 0.0.4
+**0.0.4**
 
 - auto close paths
 
-2021.09.08 - 0.0.3
+**0.0.3**
 
 - improved paths
 
-2021.09.01 - 0.0.2
+**0.0.2**
 
 - adding paths
 
-2021.08.22
+**0.0.1**
 
 - pan and zoom
 - jpg load
