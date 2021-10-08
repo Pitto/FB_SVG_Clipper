@@ -1,1 +1,2 @@
 convert MSVG:file.svg file.png 
+ffmpeg -f gdigrab -framerate 10 -i title="%" -b:v 3M out.mp4

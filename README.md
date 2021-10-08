@@ -1,10 +1,14 @@
 # FB SVG Clipper
 
-**FB (FreeBasic) SVG Clipper** is a tool that helps to **clip images** using the **Bézier tool** and exports it in a **SVG file**  with a linked and clipped image.
+**FB (FreeBasic) SVG Clipper** is a tool that allows to **clip images** using the **Bézier tool** and exports it in a **SVG file**  with a linked and clipped image.
 
-It's written in **FreeBasic language**, it's released under the terms of the *GNU LESSER GENERAL PUBLIC LICENSE Version 3*. It works on Windows an Linux environnements.
+The code is released under the terms of the *GNU LESSER GENERAL PUBLIC LICENSE Version 3*. It works on Windows an Linux environnements.
+
+FB SVG CLipper is written in [**FreeBasic language**](http://www.freebasic.net). I appreciate that other FreeBasic's users share their knowledge, see [aknowledgments](aknowledgments.md).
 
 ![Image of the Laoconte clipped](_examples/example_laoconte.png)
+
+![Example of clipping Laoconte](_examples/clipping_example.gif)
 
 ## User guide
 
@@ -53,45 +57,11 @@ Click and drag to **select** path / paths
 
 ----
 
-`CTRL + S` **Save** the .fvg file
+`CTRL + S` **Save** the .fvg file - *WARNING:* it overwrites existing file with same name
 
-`CTRL + E` **Export** the SVG file
+`CTRL + E` **Export** the SVG file - *WARNING:* it overwrites existing file with same name
 
-`CTRL + Q` **Quit** the program
-
-----
-
-## Aknowledgments
-
-This source includes parts of code written by other
-(in some cases I've slightly modified the code in order to suit the needs of the program).
-
-**paul doe:**
-
-- keyboard and mouse class https://www.freebasic.net/forum/viewtopic.php?t=28958
-
-**d.j. peters:**
-
-- jpg loader
-https://freebasic.net/forum/viewtopic.php?f=7&t=15284&hilit=othings.org%2Fstb_image.c
-- imagescale
-https://www.freebasic.net/forum/viewtopic.php?f=7&t=10533&hilit=ImageScale
-- Base64 de/encoder
-https://freebasic.net/forum/viewtopic.php?t=24127
-
-**MrSwiss:**
-
-- Loading a CSV file into an array
-https://www.freebasic.net/forum/viewtopic.php?t=25693
-
-**bcohio2001:**
-- Base64 de/encoder
-https://freebasic.net/forum/viewtopic.php?t=24127
-
-_I wish also thank_
-
-**A Primer on Bézier Curves**
-- https://pomax.github.io/bezierinfo/
+`CTRL + Q` **Quit** the program - *WARNING:* it doesn't ask to save the file
 
 ----
 
