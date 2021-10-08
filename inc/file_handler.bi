@@ -9,11 +9,13 @@ END ENUM
 
 type file_handler_proto
 
-	declare constructor (fn as string, layer as layer_proto ptr)
+	declare constructor (fn as string, img_name as string, layer as layer_proto ptr)
 
 	declare sub save (path as path_proto ptr)
 	declare sub load (layer as layer_proto ptr)
-	declare sub export_svg (path as path_proto ptr)
+	declare sub export_svg (path as path_proto ptr, _
+							bitmap_width as Ulong, _
+							bitmap_height as Ulong)
 	
 	declare property svg_set_export_mode (mode as svg_export_mode_enum)
 	
@@ -22,6 +24,7 @@ type file_handler_proto
 	declare sub split (array() as string, textline as string, divider as string)
 	
 	filename as string
+	img_filename as string
 	
 	svg_export_mode as svg_export_mode_enum
 
@@ -33,16 +36,19 @@ property file_handler_proto.svg_set_export_mode (mode as svg_export_mode_enum)
 
 end property
 
-constructor file_handler_proto (fn as string, layer as layer_proto ptr)
+constructor file_handler_proto (fn as string, img_name as string, layer as layer_proto ptr)
 
 	this.filename = fn
+	this.img_filename = img_name
 	this.load(layer)
 	
 	this.svg_export_mode = DISTINCT_PATHS
 
 end constructor
 
-sub file_handler_proto.export_svg(path as path_proto ptr)
+sub file_handler_proto.export_svg(	path as path_proto ptr, _
+									bitmap_width as Ulong, _
+									bitmap_height as Ulong)
 
 	
 	#IFDEF DEBUG
@@ -64,53 +70,66 @@ sub file_handler_proto.export_svg(path as path_proto ptr)
 	
 	Print #ff, "<?xml version='1.0' standalone='no'?>"
 	Print #ff, "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>"
-	Print #ff, "<svg  version='1.1' xmlns='http://www.w3.org/2000/svg'>"
+	Print #ff, "<svg viewBox='0 0 " +  str (bitmap_width) + " " +  str (bitmap_height) + "' version='1.1' xmlns='http://www.w3.org/2000/svg'>"
 	Print #ff, "<desc>" + APP_NAME + " " + APP_VERSION + " - Export file</desc>"
+	
+	dim line_output as string = ""
+		
+	line_output += "<defs><clipPath id='myClip' clip-rule='evenodd'>"
+		
+	line_output += "<path stroke-width = '0.2' d = ' "
 	
 	while path 
 	
 		_point = path->_point
 		
-		dim line_output as string = ""
-		
-		line_output += "<path stroke-width = '0.2' d = 'M "
-
 		dim first_coord as boolean = true
 		dim first_coord_txt as string = ""
 		
-		while _point
+		if path->is_closed then
 		
-			if _point->next_p then
+			line_output += "M "
+		
+			while _point
 			
-				first_coord_txt = iif (first_coord, str(_point->position.x) + " "+ str(_point->position.y) + " C " , " ")
+				if _point->next_p then
+				
+					first_coord_txt = iif (first_coord, str(_point->position.x) + " "+ str(_point->position.y) + " C " , " ")
 
-				line_output = 	line_output + _
-								first_coord_txt + _
-								str(_point->position.x + _point->control_next.x) + " " + _
-								str(_point->position.y + _point->control_next.y) + " " + _
-								str(_point->next_p->position.x + _point->next_p->control_prev.x) + " " + _
-								str(_point->next_p->position.y + _point->next_p->control_prev.y) + " " + _
-								str(_point->next_p->position.x ) + " " + _
-								str(_point->next_p->position.y ) + " " 
-		
-			end if
+					line_output = 	line_output + _
+									first_coord_txt + _
+									str(_point->position.x + _point->control_next.x) + " " + _
+									str(_point->position.y + _point->control_next.y) + " " + _
+									str(_point->next_p->position.x + _point->next_p->control_prev.x) + " " + _
+									str(_point->next_p->position.y + _point->next_p->control_prev.y) + " " + _
+									str(_point->next_p->position.x ) + " " + _
+									str(_point->next_p->position.y ) + " " 
 			
-			first_coord = false
+				end if
+				
+				first_coord = false
+				
+				_point = _point->next_p
 			
-			_point = _point->next_p
+			wend
+			
+			line_output += " z "
 		
-		wend
+		end if
 		
 		path = path->next_p
 		
-		
-		
-		
-		line_output += "' stroke='black' fill='transparent'/>"
-			
-		Print #ff, line_output
-		
 	wend
+	
+	'line_output += "' stroke='black' fill='black' fill-rule='evenodd'/>"
+	line_output += "' />"
+	
+	line_output += "</clipPath></defs>"
+	
+	line_output += "<image href='" + img_filename + "' clip-path='url(#myClip)'/>"
+	
+			
+	Print #ff, line_output
 	
 	Print #ff, "</svg>"
 	
@@ -118,12 +137,8 @@ sub file_handler_proto.export_svg(path as path_proto ptr)
 	
 	#IFDEF DEBUG
 		utility_consmessage    ("SVG FILE EXPORTED -> " + filename + file_extension)
-	#ENDIF
-	
-	
-	#IFDEF DEBUG
-			utility_consmessage    ("---")
-			utility_consmessage    ("exported in " + str(Timer-t) + " sec.")
+		utility_consmessage    ("---")
+		utility_consmessage    ("exported in " + str(Timer-t) + " sec.")
 	#ENDIF
 	
 
@@ -155,21 +170,22 @@ sub file_handler_proto.load (layer as layer_proto ptr)
 				
 				for i as integer = Ubound(splitted_semicolon) to 0 step -1
 				
-					#IFDEF DEBUG
-						utility_consmessage    (str (i) + " " + splitted_semicolon (i))
-					#ENDIF
+					'#IFDEF DEBUG
+						'utility_consmessage    (str (i) + " " + splitted_semicolon (i))
+					'#ENDIF
 
 					redim splitted_comma (0 to 0) as string
 					
 					'split the comma
 					split(splitted_comma(), splitted_semicolon(i), ",")
 					
-					
 					layer->path->add_point (type <vec_2d> (Csng (splitted_comma(0)), Csng (splitted_comma(1))), _
 											type <vec_2d> (Csng (splitted_comma(2)), Csng (splitted_comma(3))), _
 											type <vec_2d> (Csng (splitted_comma(4)), Csng (splitted_comma(5))), _
 											1.0, true)
 				next i
+				
+				
 				
 			
 			end if

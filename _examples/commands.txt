@@ -1,0 +1,1 @@
+convert MSVG:file.svg file.png 

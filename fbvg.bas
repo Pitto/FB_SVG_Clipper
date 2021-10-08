@@ -30,7 +30,7 @@
 
 dim fbvg_filename 			as string = str(Command(1))
 dim img_filename 			as string = str(Command(2))
-dim svg_export_mode			as string = str(Command(3))
+'dim svg_export_mode			as string = str(Command(3))
 
 if __FB_ARGC__ > 1 then
 	if not (FileExists(img_filename))  then
@@ -43,10 +43,10 @@ if __FB_ARGC__ > 1 then
 		print "WARNING: the specified fbvg file doesnt' exist"
 		print "it will be created"
 	end if
-	if svg_export_mode  = "" then
-		print "WARNING: no SVG export mode selected"
-		print "using default settings: -P (distinct paths)"
-	end if
+	'if svg_export_mode  = "" then
+		'print "WARNING: no SVG export mode selected"
+		'print "using default settings: -P (distinct paths)"
+	'end if
 	
 	
 else
@@ -80,7 +80,7 @@ dim layer as layer_proto
 
 dim e as Fb.Event
 
-var file = file_handler_proto (fbvg_filename, @layer)
+var file = file_handler_proto (fbvg_filename, img_filename, @layer)
 
 
 'important!
@@ -101,8 +101,8 @@ do
 	if keyboard.pressed (Fb.SC_S) andalso keyboard.pressed (Fb.SC_CONTROL) then file.save(layer.get_path)
 	'export SVG
 	if keyboard.pressed (Fb.SC_E) andalso keyboard.pressed (Fb.SC_CONTROL) then
-		file.svg_set_export_mode = DISTINCT_PATHS
-		file.export_svg(layer.get_path)
+		file.svg_set_export_mode = BITMAP_LINKED
+		file.export_svg(layer.get_path, screen_output.bitmap_width, screen_output.bitmap_height)
 	end if
 	
 	

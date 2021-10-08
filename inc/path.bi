@@ -154,6 +154,18 @@ sub path_proto.add_point(v1 as vec_2d, v2 as vec_2d, v3 as vec_2d, zoom as singl
 		
 		end if
 		
+		'check when loading from file if the path is closed
+		
+		if 		is_loading_from_file andalso _
+				this.number_of_points() > 1 _
+				andalso (_dist.lenght() * zoom ) < 0.00001 then
+		
+			this.is_closed = true
+			this.is_working_path = false
+		
+		end if
+		
+		
 		_point->position = v1
 		_point->control_prev = v2
 		_point->control_next = v3

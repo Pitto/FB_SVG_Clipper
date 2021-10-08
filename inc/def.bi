@@ -3,8 +3,8 @@
 #endif
 
 #DEFINE DEBUG		1
-#define	SCR_W		1024
-#define	SCR_H		768
+#define	SCR_W		800
+#define	SCR_H		600
 #define APP_NAME	"FBVG"
 #define APP_VERSION	"0.0.9"
 #define APP_AUTHOR	"Pitto"
